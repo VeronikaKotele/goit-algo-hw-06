@@ -55,7 +55,12 @@ def load_connections(csv_path: str) -> list[Connection]:
     """
     try:
       rows = load_rows_from_csv(csv_path)
-      return [Connection(flow_id=row['flow_id'], id_from=row['id_from'], id_to=row['id_to']) for row in rows]  # type: ignore
+      def unify_id(id: str) -> str:
+          if len(id) < 4:
+            id = id.zfill(4)
+          return id
+      
+      return [Connection(flow_id=row['flow_id'], id_from=unify_id(row['id_from']), id_to=unify_id(row['id_to'])) for row in rows]  # type: ignore
     except Exception as error:
       print(f'Error loading connections from CSV: {error}')
       return []

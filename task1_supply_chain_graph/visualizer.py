@@ -10,6 +10,7 @@ def plot_graph_nodes(G):
         lats.append(attrs["lat"])
         lons.append(attrs["lon"])
         labels.append(attrs.get("name", node_id))
+        sizes.append(attrs.get("size", 10))
 
     fig = go.Figure()
 
@@ -20,10 +21,22 @@ def plot_graph_nodes(G):
         mode="markers",
         marker=dict(size=sizes),
         text=labels,
-        hoverinfo="text"
+        hoverinfo="text",
     ))
 
-    fig = add_edges_to_figure(G, fig)
+    for u, v, attrs in G.edges(data=True):
+        weight = attrs.get("weight", 1)
+        lat_u = G.nodes[u]["lat"]
+        lon_u = G.nodes[u]["lon"]
+        lat_v = G.nodes[v]["lat"]
+        lon_v = G.nodes[v]["lon"]
+        fig.add_trace(go.Scattermapbox(
+            lat=[lat_u, lat_v],
+            lon=[lon_u, lon_v],
+            mode="lines",
+            line=dict(width=weight),
+            hoverinfo="none"
+        ))
 
     # Base map settings
     fig.update_layout(
@@ -34,28 +47,3 @@ def plot_graph_nodes(G):
     )
 
     return fig
-
-def add_edges_to_figure(G, fig, weight_attribute="weight"):
-    for u, v, attrs in G.edges(data=True):
-        lat_u = G.nodes[u]["lat"]
-        lon_u = G.nodes[u]["lon"]
-        lat_v = G.nodes[v]["lat"]
-        lon_v = G.nodes[v]["lon"]
-
-        weight = attrs.get(weight_attribute, 1)
-
-        # Normalize weight for display
-        min_width, max_width = 1, 8
-        width = min_width + (weight - 1) / 10 * (max_width - min_width)
-        width = min(max(width, min_width), max_width)
-
-        fig.add_trace(go.Scattermapbox(
-            lat=[lat_u, lat_v],
-            lon=[lon_u, lon_v],
-            mode="lines",
-            line=dict(width=width),
-            hoverinfo="none"
-        ))
-
-    return fig
-

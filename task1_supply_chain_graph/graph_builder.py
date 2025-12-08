@@ -7,6 +7,9 @@ def build_graph(companies: list[Company],
                 ) -> nx.Graph:
     """Builds a NetworkX graph from companies, connections, transactions, and statistics"""
 
+    filtered_companies = [company for company in companies if company.id in statistics.statistics_per_company]
+    filtered_connections = [connection for connection in connections if connection.flow_id in statistics.statistics_per_flow]
+
     min_node_size = 10.0
     max_node_size = 30.0
     d_node_size = max_node_size - min_node_size
@@ -14,7 +17,9 @@ def build_graph(companies: list[Company],
     max_edge_weight = 3.0
     d_edge_weight = max_edge_weight - min_edge_weight
 
-    company_sizes = {company.id : statistics.statistics_per_company[company.id].total_value for company in companies}
+    def get_company_size(company: Company) -> float:
+        return statistics.statistics_per_company[company.id].exported.total_value + statistics.statistics_per_company[company.id].imported.total_value
+    company_sizes = {company.id : get_company_size(company) for company in filtered_companies}
     min_company_size = min(company_sizes.values())
     max_company_size = max(company_sizes.values())
     d_company_size = max_company_size - min_company_size
@@ -28,25 +33,25 @@ def build_graph(companies: list[Company],
         return min_node_size + k * d_node_size
     
     def compute_edge_size(connection: Connection) -> float:
-        k = (statistics.statistics_per_flow[connection.Flow_Id].total_value - min_connection_size) / d_connection_size
+        k = (statistics.statistics_per_flow[connection.flow_id].total_value - min_connection_size) / d_connection_size
         return min_edge_weight + k * d_edge_weight
 
     G = nx.Graph()
 
-    for company in companies:
+    for company in filtered_companies:
         G.add_node(
             company.id,
             size=compute_node_size(company),
-            **company,
+            **company._asdict(),
         )
-    for connection in connections:
-        if (connection.Id_From not in G.nodes) or (connection.Id_To not in G.nodes):
+    for connection in filtered_connections:
+        if (connection.id_from not in G.nodes) or (connection.id_to not in G.nodes):
             continue
         G.add_edge(
-            connection.Id_From,
-            connection.Id_To,
+            connection.id_from,
+            connection.id_to,
             weight=compute_edge_size(connection),
-            **connection,
+            **connection._asdict(),
         )
 
     return G

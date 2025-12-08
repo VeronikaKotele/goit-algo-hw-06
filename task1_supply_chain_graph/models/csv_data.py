@@ -3,7 +3,10 @@ Data models for Supply Chain entities, connections, and transactions
 """
 
 
-class Company:
+from typing import NamedTuple
+
+
+class Company(NamedTuple):
     """Represents a company/entity in the supply chain"""
     id: str
     type: str
@@ -13,18 +16,18 @@ class Company:
     lon: str
 
 
-class Connection:
+class Connection(NamedTuple):
     """Represents a connection/flow between entities"""
-    Flow_Id: str
-    Id_From: str
-    Id_To: str
+    flow_id: str
+    id_from: str
+    id_to: str
 
 
-class Transaction:
+class Transaction(NamedTuple):
     """Represents a transaction in the supply chain"""
     product_name: str
     product_category: str
     flow_id_supplier: str
     flow_id_internal: str
     flow_id_customer: str
-    order_value: int
+    order_value: float

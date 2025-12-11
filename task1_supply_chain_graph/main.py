@@ -5,6 +5,7 @@ from .statistics import calculate_statistics
 from .graph_builder import build_graph
 from .visualizer import plot_graph_nodes, highlight_path
 from .draw_with_matplotlib import draw_graph_with_matplotlib
+from .task2 import find_related_leafs_compare
 
 def get_valid_company_id(G, prompt, allow_quit=True):
     """Get and validate a company ID from user input."""

@@ -36,7 +36,7 @@ def build_graph(companies: list[Company],
         k = (statistics.statistics_per_flow[connection.flow_id].total_value - min_connection_size) / d_connection_size
         return min_edge_weight + k * d_edge_weight
 
-    G = nx.Graph()
+    G = nx.DiGraph()
 
     for company in filtered_companies:
         G.add_node(
@@ -46,6 +46,7 @@ def build_graph(companies: list[Company],
         )
     for connection in filtered_connections:
         if (connection.id_from not in G.nodes) or (connection.id_to not in G.nodes):
+            print(f'Warning: skipping connection from {connection.id_from} to {connection.id_to} as one of the companies is missing in the graph')
             continue
         G.add_edge(
             connection.id_from,
@@ -53,5 +54,7 @@ def build_graph(companies: list[Company],
             weight=compute_edge_size(connection),
             **connection._asdict(),
         )
+
+    print(f'Graph built with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.')
 
     return G

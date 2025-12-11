@@ -10,6 +10,7 @@ def calculate_statistics(transactions: list[Transaction]) -> GlobalTransactionSt
         flow_id_internal = t.flow_id_internal
         flow_id_customer = t.flow_id_customer
         flow_ids = [flow_id_supplier, flow_id_internal, flow_id_customer]
+
         company_ids = [flow_id_to_company_ids(flow_id) for flow_id in flow_ids]
         exporting_companies = [id['sender'] for id in company_ids]
         importing_companies = [id['receiver'] for id in company_ids]
@@ -39,6 +40,8 @@ def flow_id_to_company_ids(flow_id: str) -> dict[str, str]:
     company_ids = flow_id.split('_')
     if len(company_ids) < 2:
         raise ValueError(f'Invalid flow_id format: {flow_id}: should contain _ separator')
+    
+    company_ids = [cid.strip('0').upper() for cid in company_ids]
 
     return { 'sender': company_ids[0], 'receiver': company_ids[1] }
 

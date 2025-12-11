@@ -37,7 +37,14 @@ def load_companies(csv_path: str) -> list[Company]:
     """
     try:
       rows = load_rows_from_csv(csv_path)
-      return [Company(**row) for row in rows]  # type: ignore
+      return [Company(
+        id=unify_company_id(row['id']), 
+        name=row['name'], 
+        type=row['type'],
+        country=row['country'], 
+        lat=row['lat'], 
+        lon=row['lon']
+      ) for row in rows]  # type: ignore
     except Exception as error:
       print(f'Error loading companies from CSV: {error}')
       return []
@@ -55,12 +62,11 @@ def load_connections(csv_path: str) -> list[Connection]:
     """
     try:
       rows = load_rows_from_csv(csv_path)
-      def unify_id(id: str) -> str:
-          if len(id) < 4:
-            id = id.zfill(4)
-          return id
-      
-      return [Connection(flow_id=row['flow_id'], id_from=unify_id(row['id_from']), id_to=unify_id(row['id_to'])) for row in rows]  # type: ignore
+      return [Connection(
+        flow_id=row['flow_id'], 
+        id_from=unify_company_id(row['flow_id'].split('_')[0]), 
+        id_to=unify_company_id(row['flow_id'].split('_')[1])
+      ) for row in rows]  # type: ignore
     except Exception as error:
       print(f'Error loading connections from CSV: {error}')
       return []
@@ -88,3 +94,6 @@ def load_transactions(csv_path: str) -> list[Transaction]:
     except Exception as error:
       print(f'Error loading connections from CSV: {error}')
       return []
+    
+def unify_company_id(company_id: str) -> str:
+  return company_id.strip('0').upper()

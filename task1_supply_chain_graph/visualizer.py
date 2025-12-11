@@ -47,3 +47,24 @@ def plot_graph_nodes(G):
     )
 
     return fig
+
+def highlight_path(G, fig, path):
+    # Iterate through consecutive node pairs in path
+    for i in range(len(path) - 1):
+        u = path[i]
+        v = path[i + 1]
+
+        lat_u = G.nodes[u]["lat"]
+        lon_u = G.nodes[u]["lon"]
+        lat_v = G.nodes[v]["lat"]
+        lon_v = G.nodes[v]["lon"]
+
+        fig.update_traces(go.Scattermapbox(
+            lat=[lat_u, lat_v],
+            lon=[lon_u, lon_v],
+            mode="lines",
+            line=dict(width=6, color="red"),  # Highlighting
+            hoverinfo="none"
+        ))
+
+    return fig

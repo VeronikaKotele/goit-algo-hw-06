@@ -20,9 +20,9 @@ options = {
 }
 nx.draw(G, **options)
 labels = nx.get_edge_attributes(G,'label')
-pos=nx.spring_layout(G) # or circular_layout, shell_layout, random_layout
+pos=nx.spring_layout(G) # spring_layout or circular_layout, shell_layout, random_layout
 nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
-nx.apply_matplotlib_colors(G, "color", "node")
+#nx.apply_matplotlib_colors(G, "color", "node")
 plt.show()
 #plt.savefig(<wherever>)
 

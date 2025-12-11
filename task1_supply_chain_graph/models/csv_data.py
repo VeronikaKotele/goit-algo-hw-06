@@ -9,8 +9,8 @@ from typing import NamedTuple
 class Company(NamedTuple):
     """Represents a company/entity in the supply chain"""
     id: str
-    type: str
     name: str
+    type: str
     country: str
     lat: str
     lon: str

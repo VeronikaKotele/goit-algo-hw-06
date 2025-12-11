@@ -35,7 +35,8 @@ def plot_graph_nodes(G):
             lon=[lon_u, lon_v],
             mode="lines",
             line=dict(width=weight),
-            hoverinfo="none"
+            hoverinfo="text",
+            text=f"Weight: {weight}"
         ))
 
     # Base map settings
@@ -48,7 +49,15 @@ def plot_graph_nodes(G):
 
     return fig
 
-def highlight_path(G, fig, path):
+def highlight_path(G, fig, path, clear_previous=True):
+    """Highlight a path on the graph with improved visualization."""
+    if clear_previous:
+        # Remove previous path highlights (traces added after initial graph)
+        # Keep only original nodes and edges (first N traces)
+        initial_traces = len(G.edges()) + 1  # edges + nodes
+        fig.data = fig.data[:initial_traces]
+    
+    # Add highlighted edges
     # Iterate through consecutive node pairs in path
     for i in range(len(path) - 1):
         u = path[i]
@@ -59,12 +68,15 @@ def highlight_path(G, fig, path):
         lat_v = G.nodes[v]["lat"]
         lon_v = G.nodes[v]["lon"]
 
-        fig.update_traces(go.Scattermapbox(
+        # Add path edge with distinct style
+        fig.add_trace(go.Scattermapbox(
             lat=[lat_u, lat_v],
             lon=[lon_u, lon_v],
             mode="lines",
-            line=dict(width=6, color="red"),  # Highlighting
-            hoverinfo="none"
+            line=dict(width=5, color="red"),
+            hoverinfo="skip",
+            showlegend=False,
+            name="Path"
         ))
-
+        
     return fig

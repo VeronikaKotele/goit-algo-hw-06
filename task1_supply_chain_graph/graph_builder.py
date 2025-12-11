@@ -14,7 +14,7 @@ def build_graph(companies: list[Company],
     max_node_size = 30.0
     d_node_size = max_node_size - min_node_size
     min_edge_weight = 1.0
-    max_edge_weight = 3.0
+    max_edge_weight = 10.0
     d_edge_weight = max_edge_weight - min_edge_weight
 
     def get_company_size(company: Company) -> float:

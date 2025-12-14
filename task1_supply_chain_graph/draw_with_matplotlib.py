@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-def draw_graph_with_matplotlib(G: nx.Graph):
+def draw_graph_with_matplotlib(G: nx.Graph, highlight_path_nodes: list[str] | None = None):
     pos = nx.spring_layout(G)  # positions for all nodes
 
     # nodes
@@ -11,6 +11,11 @@ def draw_graph_with_matplotlib(G: nx.Graph):
     # edges
     edge_weights = [G[u][v].get('weight', 1) for u, v in G.edges()]
     nx.draw_networkx_edges(G, pos, width=edge_weights, edge_color='gray', arrows=True)
+
+    if highlight_path_nodes:
+        # Highlight path edges
+        path_edges = list(zip(highlight_path_nodes, highlight_path_nodes[1:]))
+        nx.draw_networkx_edges(G, pos, edgelist=path_edges, width=5, edge_color='red', arrows=True)
 
     # labels
     labels = {node: G.nodes[node].get('name', node) for node in G.nodes()}
